@@ -196,7 +196,7 @@ a {
 [data-slot='carousel-item'] > * {
   pointer-events: auto;
   touch-action: auto;
-  height: 100vh !important;
+  /* height: 100vh !important; */
   width: 100% !important;
 }
 
