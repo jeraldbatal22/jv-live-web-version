@@ -15,7 +15,7 @@ const USERS_MOCK_DATA = [
     image: '/assets/images/recommended-cover-3.png',
   },
   {
-    name: 'Rhys Ifans',
+    name: 'Rhys Ifan',
     character: 'Otto Hightower',
     image: '/assets/images/recommended-cover-4.png',
   },
