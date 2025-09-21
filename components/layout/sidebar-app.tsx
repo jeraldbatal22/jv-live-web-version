@@ -19,9 +19,9 @@ import {
   MenuIcon,
   Search,
   LogInIcon,
-  MessageCircle,
-  User,
-  Camera,
+  // MessageCircle,
+  // User,
+  // Camera,
   Home,
   Newspaper,
 } from 'lucide-react';
@@ -34,9 +34,9 @@ import { Label } from '../ui/label';
 const menuItems = [
   { title: 'Feed', url: '/', icon: Newspaper },
   { title: 'Home', url: '/home', icon: Home },
-  { title: 'Live', url: '/live', icon: Camera },
-  { title: 'Chats', url: '/chats', icon: MessageCircle },
-  { title: 'Profile', url: '/profile', icon: User },
+  // { title: 'Live', url: '/live', icon: Camera },
+  // { title: 'Chats', url: '/chats', icon: MessageCircle },
+  // { title: 'Profile', url: '/profile', icon: User },
 ];
 
 const SidebarApp = () => {
