@@ -57,5 +57,5 @@ export function useIdleOverlay({
     };
   }, [ref, idleTime, isInside]);
 
-  return isIdle;
+  return { isIdle, setIsIdle };
 }

@@ -11,44 +11,37 @@ import {
   SkipForward,
   MoreVertical,
   Music,
+  Share,
+  Bookmark,
+  MessageCircle,
+  Heart,
 } from 'lucide-react';
 import { useIdleOverlay } from '@/hooks/usIdleOverlay';
 import { cn } from '@/lib/utils';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import '@videojs/themes/dist/city/index.css';
+import { SidebarTrigger } from '../../ui/sidebar';
 
-interface VideoPlayerProps {
-  src: string;
-  username: string;
-  caption: string;
+interface PreviewVideoPlayerProps {
+  videoData: any;
   isPlaying: boolean;
   isMuted: boolean;
-  isActive: boolean;
+  isActive?: boolean;
   onPlayPause: () => void;
   onMuteToggle: () => void;
-  onSkipForward: () => void;
-  onSkipBackward: () => void;
   onVideoClick: () => void;
-  showControls: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  showControls?: boolean;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  src,
-  username,
-  caption,
+const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
+  videoData,
   isPlaying,
   isMuted,
   onPlayPause,
   onMuteToggle,
-  onSkipForward,
-  onSkipBackward,
   onVideoClick,
-  showControls,
-  onMouseEnter,
-  onMouseLeave,
+  showControls = true,
   isActive,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -93,10 +86,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (!playerRef.current) return;
     const player = playerRef.current;
     const currentSrc = (player.currentSource()?.src as string) || '';
-    if (src && currentSrc !== src) {
-      player.src({ src, type: 'video/mp4' });
+    if (videoData?.url && currentSrc !== videoData?.url) {
+      player.src({ src: videoData?.url, type: 'video/mp4' });
     }
-  }, [src]);
+  }, [videoData?.url]);
 
   // Handle play/pause state changes
   useEffect(() => {
@@ -123,7 +116,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (player) {
       player.currentTime((player.currentTime() || 0) + 10);
     }
-    onSkipForward();
   };
 
   const handleSkipBackward = () => {
@@ -131,7 +123,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (player) {
       player.currentTime(Math.max(0, (player.currentTime() || 0) - 10));
     }
-    onSkipBackward();
   };
 
   const handlePlayPause = () => {
@@ -146,28 +137,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     onPlayPause();
   };
   const containerRef = useRef<HTMLDivElement>(null);
-  const isIdle = useIdleOverlay({ idleTime: 3000, ref: containerRef }); // 3s idle delay
+  const { isIdle } = useIdleOverlay({ idleTime: 3000, ref: containerRef }); // 3s idle delay
 
   return (
     <div
       ref={containerRef}
-      className="relative h-screen w-full bg-black"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      className="relative h-dvh w-full bg-black"
       onClick={onVideoClick}
-      onTouchStart={() => {
-        // Show controls on mobile touch
-        if (window.innerWidth < 1024) {
-          onMouseEnter();
-          setTimeout(() => onMouseLeave(), 3000);
-        }
-      }}
-      style={{
-        width: '100%',
-        height: '100vh',
-        backgroundColor: '#000',
-        position: 'relative',
-      }}
     >
       <video
         ref={videoRef}
@@ -181,7 +157,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       />
 
       {/* Video Overlays */}
-      <div className="absolute top-2 left-2 z-1 md:top-4 md:left-4">
+      <div className="absolute top-2 left-2 z-20 md:top-4 md:left-4">
         <Button
           variant="ghost"
           size="icon"
@@ -199,7 +175,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </Button>
       </div>
 
-      <div className="absolute top-2 right-2 z-1 md:top-4 md:right-4">
+      <div className="absolute top-2 right-2 z-20 flex items-center md:top-4 md:right-4">
         <Button
           variant="ghost"
           size="icon"
@@ -208,6 +184,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         >
           <MoreVertical className="!h-5 !w-5 md:!h-6 md:!w-6" />
         </Button>
+        <SidebarTrigger
+          onClick={(e) => e.stopPropagation()}
+          className="z-20 mt-0 flex cursor-pointer md:hidden"
+        />
       </div>
 
       {/* Video Controls Overlay */}
@@ -264,6 +244,64 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       </div>
 
+      {/* Video Counter */}
+      <div className="absolute right-1 bottom-30 z-10 transform rounded px-2 py-1 text-sm text-white md:right-4">
+        <div className="flex-1 flex-row items-center justify-end space-y-4 pb-8">
+          {/* Profile Picture */}
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-lg font-bold text-white md:h-16 md:w-16">
+            {videoData.username?.charAt(0).toUpperCase() || 'U'}
+          </div>
+
+          {/* Like Button */}
+          <div className="flex flex-col items-center space-y-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 cursor-pointer rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/30 md:h-16 md:w-16"
+            >
+              <Heart className="!h-5 !w-5 md:!h-7 md:!w-7" />
+            </Button>
+            <span className="text-xs">{videoData.likes || '0'}</span>
+          </div>
+
+          {/* Comment Button */}
+          <div className="flex flex-col items-center space-y-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 cursor-pointer rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/30 md:h-16 md:w-16"
+            >
+              <MessageCircle className="!h-5 !w-5 md:!h-7 md:!w-7" />
+            </Button>
+            <span className="text-xs">{videoData.comments || '0'}</span>
+          </div>
+
+          {/* Save Button */}
+          <div className="flex flex-col items-center space-y-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 cursor-pointer rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/30 md:h-16 md:w-16"
+            >
+              <Bookmark className="!h-5 !w-5 md:!h-7 md:!w-7" />
+            </Button>
+            <span className="text-xs">{videoData.saves || '0'}</span>
+          </div>
+
+          {/* Share Button */}
+          <div className="flex flex-col items-center space-y-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 cursor-pointer rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/30 md:h-16 md:w-16"
+            >
+              <Share className="!h-5 !w-5 md:!h-7 md:!w-7" />
+            </Button>
+            <span className="text-xs">{videoData.shares || '0'}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Video Metadata */}
       <div
         onClick={(e) => {
@@ -272,14 +310,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         }}
         className="absolute right-0 bottom-0 left-0 z-1 w-full max-w-full px-5 py-3 text-white backdrop-blur-sm md:space-y-3"
       >
-        <div className="text-xl font-semibold md:text-3xl">{username}</div>
+        <div className="text-xl font-semibold md:text-3xl">
+          {videoData.username}
+        </div>
         <div className="mt-1 text-sm md:text-lg">
-          {caption}
+          {videoData.caption}
           <span className="ml-1 text-gray-300">more</span>
         </div>
         <div className="md:text-md mt-2 flex items-center text-sm">
           <Music className="mr-1 h-4 w-4" />
-          <span>original sound - {username}</span>
+          <span>original sound - {videoData.username}</span>
         </div>
       </div>
 
@@ -294,4 +334,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   );
 };
 
-export default VideoPlayer;
+export default PreviewVideoPlayer;

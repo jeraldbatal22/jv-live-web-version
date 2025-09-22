@@ -6,7 +6,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from '@/components/ui/carousel';
-import CardCover from '@/components/card-cover';
+import CardCover from '@/components/common/card-cover';
 import { ChevronRightIcon } from 'lucide-react';
 
 interface BrowseByCategorySectionProps {

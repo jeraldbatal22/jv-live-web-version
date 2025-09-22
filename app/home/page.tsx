@@ -29,7 +29,7 @@ import { Label } from '@radix-ui/react-label';
 // }
 
 // Main page component
-const DiscoverPage = async () => {
+const DiscoverPage = () => {
   // let data: I_DISCOVER_PAGE_DATA;
 
   // try {
