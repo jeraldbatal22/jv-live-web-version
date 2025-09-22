@@ -147,7 +147,7 @@ a {
   }
 }
 
-/* Carousel fixes for single video display */
+/* Carousel fixes for single video display
 .embla {
   overflow: hidden !important;
   touch-action: none;
@@ -166,12 +166,10 @@ a {
 .embla__slide {
   flex: 0 0 100vh !important;
   min-width: 0;
-  /* height: 100vh !important; */
   width: 100% !important;
   touch-action: none;
 }
 
-/* Disable all touch interactions on carousel */
 [data-slot='carousel'] {
   touch-action: none;
   pointer-events: none;
@@ -187,18 +185,15 @@ a {
 [data-slot='carousel-item'] {
   touch-action: none;
   pointer-events: none;
-  /* height: 100vh !important; */
   width: 100% !important;
   flex-shrink: 0 !important;
 }
 
-/* Re-enable pointer events for video content */
 [data-slot='carousel-item'] > * {
   pointer-events: auto;
   touch-action: auto;
-  /* height: 100vh !important; */
   width: 100% !important;
-}
+} */
 
 /* Mobile-specific styles */
 @media (max-width: 1023px) {

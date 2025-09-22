@@ -12,6 +12,11 @@ import {
   MoreVertical,
   Music,
 } from 'lucide-react';
+import { useIdleOverlay } from '@/hooks/usIdleOverlay';
+import { cn } from '@/lib/utils';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
+import '@videojs/themes/dist/city/index.css';
 
 interface VideoPlayerProps {
   src: string;
@@ -19,6 +24,7 @@ interface VideoPlayerProps {
   caption: string;
   isPlaying: boolean;
   isMuted: boolean;
+  isActive: boolean;
   onPlayPause: () => void;
   onMuteToggle: () => void;
   onSkipForward: () => void;
@@ -43,76 +49,108 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   showControls,
   onMouseEnter,
   onMouseLeave,
+  isActive,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<any>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    if (!videoRef.current || playerRef.current) return;
 
-    const updateTime = () => setCurrentTime(video.currentTime);
-    const updateDuration = () => setDuration(video.duration);
+    const player = videojs(videoRef.current, {
+      controls: false, // keep using custom overlay controls
+      autoplay: true,
+      loop: true,
+      preload: 'metadata',
+      playsinline: true,
+      fluid: false,
+      responsive: true,
+      inactivityTimeout: 0,
+    });
 
-    video.addEventListener('timeupdate', updateTime);
-    video.addEventListener('loadedmetadata', updateDuration);
+    playerRef.current = player;
+
+    // Wire up time/duration updates
+    const onTimeUpdate = () => setCurrentTime(player.currentTime() || 0);
+    const onLoadedMetadata = () => setDuration(player.duration() || 0);
+    player.on('timeupdate', onTimeUpdate);
+    player.on('loadedmetadata', onLoadedMetadata);
+
+    // Source and mute handled in subsequent effects
 
     return () => {
-      video.removeEventListener('timeupdate', updateTime);
-      video.removeEventListener('loadedmetadata', updateDuration);
+      player.off('timeupdate', onTimeUpdate);
+      player.off('loadedmetadata', onLoadedMetadata);
+      player.dispose();
+      playerRef.current = null;
     };
   }, []);
 
+  // Update source when src changes
+  useEffect(() => {
+    if (!playerRef.current) return;
+    const player = playerRef.current;
+    const currentSrc = (player.currentSource()?.src as string) || '';
+    if (src && currentSrc !== src) {
+      player.src({ src, type: 'video/mp4' });
+    }
+  }, [src]);
+
   // Handle play/pause state changes
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (isPlaying) {
-      video.play().catch(console.error);
+    const player = playerRef.current;
+    if (!player) return;
+    if (isPlaying || isActive) {
+      player.play().catch(() => {});
     } else {
-      video.pause();
+      player.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, isActive]);
 
   // Handle mute state changes
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.muted = isMuted;
+    const player = playerRef.current;
+    if (!player) return;
+    player.muted(isMuted);
   }, [isMuted]);
 
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   const handleSkipForward = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime += 10;
+    const player = playerRef.current;
+    if (player) {
+      player.currentTime((player.currentTime() || 0) + 10);
     }
     onSkipForward();
   };
 
   const handleSkipBackward = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime -= 10;
+    const player = playerRef.current;
+    if (player) {
+      player.currentTime(Math.max(0, (player.currentTime() || 0) - 10));
     }
     onSkipBackward();
   };
 
   const handlePlayPause = () => {
-    if (videoRef.current) {
+    const player = playerRef.current;
+    if (player) {
       if (isPlaying) {
-        videoRef.current.pause();
+        player.pause();
       } else {
-        videoRef.current.play().catch(console.error);
+        player.play().catch(() => {});
       }
     }
     onPlayPause();
   };
-  console.log(src, username);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isIdle = useIdleOverlay({ idleTime: 3000, ref: containerRef }); // 3s idle delay
+
   return (
     <div
+      ref={containerRef}
       className="relative h-screen w-full bg-black"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -133,32 +171,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     >
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full cursor-pointer object-cover"
-        autoPlay
-        loop
-        muted={isMuted}
-        playsInline
-        preload="metadata"
+        className="video-js vjs-theme-city absolute inset-0 h-full w-full cursor-pointer object-cover"
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
           display: 'block',
         }}
-      >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
-      {/* Debug overlay for mobile */}
-      <div className="absolute top-4 left-4 z-50 lg:hidden">
-        <div className="rounded bg-red-500 px-2 py-1 text-xs text-white">
-          Video: {isPlaying ? 'Playing' : 'Paused'}
-        </div>
-      </div>
+      />
 
       {/* Video Overlays */}
-      <div className="absolute top-4 left-4 z-1">
+      <div className="absolute top-2 left-2 z-1 md:top-4 md:left-4">
         <Button
           variant="ghost"
           size="icon"
@@ -169,29 +192,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           className="text-white hover:bg-black/20"
         >
           {isMuted ? (
-            <VolumeX className="h-6 w-6" />
+            <VolumeX className="!h-5 !w-5 md:!h-6 md:!w-6" />
           ) : (
-            <Volume2 className="h-6 w-6" />
+            <Volume2 className="!h-5 !w-5 md:!h-6 md:!w-6" />
           )}
         </Button>
       </div>
 
-      <div className="absolute top-4 right-4 z-1">
+      <div className="absolute top-2 right-2 z-1 md:top-4 md:right-4">
         <Button
           variant="ghost"
           size="icon"
           className="text-white hover:bg-black/20"
           onClick={(e) => e.stopPropagation()}
         >
-          <MoreVertical className="h-6 w-6" />
+          <MoreVertical className="!h-5 !w-5 md:!h-6 md:!w-6" />
         </Button>
       </div>
 
       {/* Video Controls Overlay */}
       <div
-        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'} lg:${showControls ? 'opacity-100' : 'opacity-0'} mobile-controls`}
+        className={cn(
+          showControls ? 'opacity-100' : 'opacity-0',
+          `lg:${showControls ? 'opacity-100' : 'opacity-0'}`,
+          isIdle
+            ? 'pointer-events-none scale-90 opacity-0'
+            : 'scale-100 opacity-100',
+          'absolute inset-0 z-2 flex items-center justify-center transition-all duration-500 ease-in-out'
+        )}
       >
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <Button
             variant="ghost"
             size="icon"
@@ -199,9 +229,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               e.stopPropagation();
               handleSkipBackward();
             }}
-            className="mobile-nav-button h-20 w-20 rounded-full text-white hover:bg-black/20"
+            className="h-14 w-14 rounded-full text-white hover:bg-black/20 md:h-20 md:w-20"
           >
-            <SkipBack className="!h-8 !w-8" />
+            <SkipBack className="!h-5 !w-5 md:!h-8 md:!w-8" />
           </Button>
 
           <Button
@@ -211,12 +241,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               e.stopPropagation();
               handlePlayPause();
             }}
-            className="mobile-nav-button h-20 w-20 rounded-full text-white hover:bg-black/20"
+            className="h-14 w-14 rounded-full text-white hover:bg-black/20 md:h-20 md:w-20"
           >
             {isPlaying ? (
-              <Pause className="!h-8 !w-8" />
+              <Pause className="!h-5 !w-5 md:!h-8 md:!w-8" />
             ) : (
-              <Play className="!h-8 !w-8" />
+              <Play className="!h-5 !w-5 md:!h-8 md:!w-8" />
             )}
           </Button>
 
@@ -227,9 +257,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               e.stopPropagation();
               handleSkipForward();
             }}
-            className="mobile-nav-button h-20 w-20 rounded-full text-white hover:bg-black/20"
+            className="mobile-nav-button h-14 w-14 rounded-full text-white hover:bg-black/20 md:h-20 md:w-20"
           >
-            <SkipForward className="!h-8 !w-8" />
+            <SkipForward className="!h-5 !w-5 md:!h-8 md:!w-8" />
           </Button>
         </div>
       </div>
@@ -240,23 +270,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           e.stopPropagation();
           console.log('first');
         }}
-        className="absolute right-0 bottom-0 left-0 z-10 w-full max-w-xs space-y-3 px-5 py-3 text-white backdrop-blur-sm lg:max-w-full"
+        className="absolute right-0 bottom-0 left-0 z-1 w-full max-w-full px-5 py-3 text-white backdrop-blur-sm md:space-y-3"
       >
-        <div className="text-3xl font-semibold">{username}</div>
-        <div className="mt-1 text-lg">
+        <div className="text-xl font-semibold md:text-3xl">{username}</div>
+        <div className="mt-1 text-sm md:text-lg">
           {caption}
           <span className="ml-1 text-gray-300">more</span>
         </div>
-        <div className="text-md mt-2 flex items-center">
+        <div className="md:text-md mt-2 flex items-center text-sm">
           <Music className="mr-1 h-4 w-4" />
           <span>original sound - {username}</span>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 h-1 w-full bg-gray-600">
+      <div className="absolute bottom-0 left-0 z-2 h-1 w-full bg-gray-600">
         <div
-          className="h-full bg-red-500 transition-all duration-100"
+          className="h-full bg-gray-100 transition-all duration-100"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
