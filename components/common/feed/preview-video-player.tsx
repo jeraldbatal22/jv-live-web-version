@@ -42,7 +42,6 @@ const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
   onMuteToggle,
   onVideoClick,
   showControls = true,
-  isActive,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<any>(null);
@@ -95,12 +94,12 @@ const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
   useEffect(() => {
     const player = playerRef.current;
     if (!player) return;
-    if (isPlaying || isActive) {
+    if (isPlaying) {
       player.play().catch(() => {});
     } else {
       player.pause();
     }
-  }, [isPlaying, isActive]);
+  }, [isPlaying]);
 
   // Handle mute state changes
   useEffect(() => {

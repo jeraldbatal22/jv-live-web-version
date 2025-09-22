@@ -111,7 +111,6 @@ const FeedPage = () => {
                           handleVideoClick();
                         }
                       }}
-                      isActive={current === index}
                       onMuteToggle={() => setIsMuted(!isMuted)}
                       onVideoClick={() => {
                         console.log(current, index);
