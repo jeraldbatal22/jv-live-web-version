@@ -198,14 +198,15 @@ a {
 
 /* Mobile-specific styles */
 @media (max-width: 1023px) {
-  body {
+  /* Opt-in: add .no-scroll to <body> and <html> on pages that need scroll lock */
+  body.no-scroll {
     overflow: hidden;
     position: fixed;
     width: 100%;
     height: 100%;
   }
 
-  html {
+  html.no-scroll {
     overflow: hidden;
     height: 100%;
   }

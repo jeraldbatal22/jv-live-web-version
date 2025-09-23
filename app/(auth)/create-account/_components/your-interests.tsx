@@ -2,15 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { UseFormSetValue, FieldErrors, UseFormWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { CreateAccountFormData } from '@/lib/validations/auth';
 // import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 
 interface YourInterestsProps {
-  setValue: UseFormSetValue<CreateAccountFormData>;
-  watch: UseFormWatch<CreateAccountFormData>;
-  errors: FieldErrors<CreateAccountFormData>;
   onHandleChangeTab: () => void;
   onHandlePreviousTab?: () => void;
 }
@@ -44,13 +41,8 @@ const interestCategories: InterestCategory[] = [
   { id: 'health', name: 'Health', icon: '/assets/icons/svg/health-icon.svg' },
 ];
 
-const YourInterests = ({
-  setValue,
-  watch,
-  errors,
-  onHandleChangeTab,
-  onHandlePreviousTab,
-}: YourInterestsProps) => {
+const YourInterests = ({ onHandleChangeTab, onHandlePreviousTab }: YourInterestsProps) => {
+  const { setValue, watch, trigger, formState: { errors } } = useFormContext<CreateAccountFormData>();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,6 +64,10 @@ const YourInterests = ({
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
+      const isValid = await trigger('interests');
+      if (!isValid) {
+        return;
+      }
       // TODO: Implement actual interest selection logic
       console.log('Selected interests:', selectedInterests);
       // Simulate API call
@@ -108,17 +104,17 @@ const YourInterests = ({
 
       {/* Title and description */}
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-bold text-white uppercase sm:text-3xl">
+        <h1 className="text-xl font-bold text-white uppercase sm:text-3xl">
           YOUR INTERESTS
         </h1>
-        <p className="text-sm text-gray-400 sm:text-base">
+        <p className="text-xs text-gray-400 sm:text-base">
           Select categories you&apos;d love to explore. This helps us
           personalize your experience and recommend the best livestreams.
         </p>
       </div>
 
       {/* Interest categories grid */}
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4">
         {interestCategories.map((category) => {
           const isSelected = selectedInterests.includes(category.id);
           return (
@@ -126,7 +122,7 @@ const YourInterests = ({
               key={category.id}
               variant="ghost"
               onClick={() => toggleInterest(category.id)}
-              className={`flex h-[44px] items-center justify-center space-x-2 rounded-full transition-all duration-200 ${
+              className={`flex h-10 sm:h-[44px] items-center justify-center space-x-2 rounded-full transition-all duration-200 ${
                 isSelected
                   ? 'border-green-500 bg-[linear-gradient(105deg,#57A7FF_0%,#04FF00_100%)] text-black'
                   : 'border-gray-600 bg-[#302930] text-gray-400 hover:border-gray-500 hover:text-gray-300'
@@ -135,11 +131,11 @@ const YourInterests = ({
               <Image
                 src={category.icon}
                 alt={category.name}
-                width={24}
-                height={24}
+              width={20}
+              height={20}
                 className={`text-red-500 ${isSelected ? '!text-white' : '!text-gray-400'}`}
               />
-              <span className="text-center text-lg font-medium">
+              <span className="text-center text-sm sm:text-lg font-medium">
                 {category.name}
               </span>
             </Button>
@@ -158,7 +154,7 @@ const YourInterests = ({
       <Button
         onClick={handleSubmit}
         disabled={isLoading || selectedInterests.length === 0}
-        className="h-12 w-full transform rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] text-lg font-bold text-white transition-all duration-200 hover:scale-[1.02] hover:from-pink-600 hover:to-pink-500 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+        className="h-11 sm:h-12 w-full transform rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] text-base sm:text-lg font-bold text-white transition-all duration-200 hover:scale-[1.02] hover:from-pink-600 hover:to-pink-500 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? 'SAVING...' : 'CONTINUE'}
       </Button>

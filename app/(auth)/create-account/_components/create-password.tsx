@@ -1,24 +1,22 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { CreateAccountFormData } from '@/lib/validations/auth';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Eye, EyeOff, Check } from 'lucide-react';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 interface CreatePasswordProps {
-  register: UseFormRegister<CreateAccountFormData>;
-  errors: FieldErrors<CreateAccountFormData>;
-  watch: UseFormWatch<CreateAccountFormData>;
   onHandleChangeTab: () => void;
   onHandlePreviousTab?: () => void;
 }
 
-const CreatePassword = ({ register, errors, watch, onHandleChangeTab, onHandlePreviousTab }: CreatePasswordProps) => {
+const CreatePassword = ({ onHandleChangeTab, onHandlePreviousTab }: CreatePasswordProps) => {
+  const { watch, trigger } = useFormContext<CreateAccountFormData>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,6 +54,10 @@ const CreatePassword = ({ register, errors, watch, onHandleChangeTab, onHandlePr
   const handlePasswordSubmit = async () => {
     setIsLoading(true);
     try {
+      const isValid = await trigger(['password', 'confirmPassword']);
+      if (!isValid) {
+        return;
+      }
       // TODO: Implement actual password creation logic
       console.log('Password data:', { password, confirmPassword: watch('confirmPassword') });
       // Simulate API call
@@ -91,86 +93,84 @@ const CreatePassword = ({ register, errors, watch, onHandleChangeTab, onHandlePr
         </p>
       </div>
 
-      <div className="space-y-6">
-        {/* Password field */}
-        <div className="space-y-2">
-          <Label
-            htmlFor="password"
-            className="text-sm font-medium text-white uppercase"
-          >
-            PASSWORD
-          </Label>
-          <div className="relative">
-            <Input
-              id="password"
-              placeholder="Enter password"
-              type={showPassword ? 'text' : 'password'}
-              className="h-12 rounded-full border-none bg-gray-800 pr-12 text-white placeholder:text-gray-400 focus:border-pink-400 focus:ring-pink-400/20"
-              {...register('password')}
-            />
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
-          {errors.password && (
-            <p className="text-sm text-red-400">{errors.password.message}</p>
+      <div className="space-y-4 sm:space-y-6">
+        <FormField
+          name="password"
+          control={useFormContext<CreateAccountFormData>().control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm font-medium text-white uppercase">PASSWORD</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    placeholder="Enter password"
+                    type={showPassword ? 'text' : 'password'}
+                    className="h-11 sm:h-12 rounded-full border-none bg-gray-800 pr-10 sm:pr-12 text-white placeholder:text-gray-400 focus:border-pink-400 focus:ring-pink-400/20"
+                    {...field}
+                  />
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-1/2 right-2 sm:right-3 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
 
-        {/* Confirm Password field */}
-        <div className="space-y-2">
-          <Label
-            htmlFor="confirmPassword"
-            className="text-sm font-medium text-white uppercase"
-          >
-            CONFIRM PASSWORD
-          </Label>
-          <div className="relative">
-            <Input
-              id="confirmPassword"
-              placeholder="Confirm password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              className="h-12 rounded-full border-none bg-gray-800 pr-12 text-white placeholder:text-gray-400 focus:border-pink-400 focus:ring-pink-400/20"
-              {...register('confirmPassword')}
-            />
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
-            >
-              {showConfirmPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
-          {errors.confirmPassword && (
-            <p className="text-sm text-red-400">{errors.confirmPassword.message}</p>
+        <FormField
+          name="confirmPassword"
+          control={useFormContext<CreateAccountFormData>().control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm font-medium text-white uppercase">CONFIRM PASSWORD</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    placeholder="Confirm password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    className="h-11 sm:h-12 rounded-full border-none bg-gray-800 pr-10 sm:pr-12 text-white placeholder:text-gray-400 focus:border-pink-400 focus:ring-pink-400/20"
+                    {...field}
+                  />
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute top-1/2 right-2 sm:right-3 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
 
         {/* Password Strength Indicator */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-white uppercase">
+          <p className="text-sm font-medium text-white uppercase">
             PASSWORD STRENGTH
-          </Label>
-          <div className="flex items-center space-x-3">
+          </p>
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <Progress 
               value={passwordStrength.score} 
-              className="flex-1 h-2 bg-gray-700"
+              className="flex-1 h-1.5 sm:h-2 bg-gray-700"
             />
-            <span className="text-sm text-white font-medium">
+            <span className="text-xs sm:text-sm text-white font-medium">
               {passwordStrength.label}
             </span>
           </div>
@@ -178,9 +178,9 @@ const CreatePassword = ({ register, errors, watch, onHandleChangeTab, onHandlePr
 
         {/* Password Requirements */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-white uppercase">
+          <p className="text-sm font-medium text-white uppercase">
             PASSWORD REQUIREMENTS
-          </Label>
+          </p>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
@@ -206,7 +206,7 @@ const CreatePassword = ({ register, errors, watch, onHandleChangeTab, onHandlePr
           type="button"
           onClick={handlePasswordSubmit}
           disabled={isLoading}
-          className="h-12 w-full transform rounded-full bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] text-lg font-bold text-white transition-all duration-200 hover:scale-[1.02] hover:from-pink-600 hover:to-pink-500 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-11 sm:h-12 w-full transform rounded-full bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] text-base sm:text-lg font-bold text-white transition-all duration-200 hover:scale-[1.02] hover:from-pink-600 hover:to-pink-500 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? 'CREATING...' : 'CREATE PASSWORD'}
         </Button>

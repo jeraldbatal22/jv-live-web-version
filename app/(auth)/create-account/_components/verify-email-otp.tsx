@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UseFormRegister, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { OTPInput } from '@/components/ui/otp-input';
@@ -9,13 +9,11 @@ import { CreateAccountFormData } from '@/lib/validations/auth';
 // import { useRouter } from 'next/navigation';
 
 interface VerifyEmailOtpProps {
-  register: UseFormRegister<CreateAccountFormData>;
-  errors: FieldErrors<CreateAccountFormData>;
-  setValue: UseFormSetValue<CreateAccountFormData>;
   onHandleChangeTab: () => void;
 }
 
-const VerifyEmailOtp = ({ register: _register, errors, setValue, onHandleChangeTab }: VerifyEmailOtpProps) => {
+const VerifyEmailOtp = ({ onHandleChangeTab }: VerifyEmailOtpProps) => {
+  const { setValue, trigger, formState: { errors } } = useFormContext<CreateAccountFormData>();
   // const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [otpValue, setOtpValue] = useState('');
@@ -23,6 +21,10 @@ const VerifyEmailOtp = ({ register: _register, errors, setValue, onHandleChangeT
   const handleOtpSubmit = async () => {
     setIsLoading(true);
     try {
+      const isValid = await trigger('otp');
+      if (!isValid) {
+        return;
+      }
       // TODO: Implement actual OTP verification logic
       console.log('OTP data:', { otp: otpValue });
       // Simulate API call
@@ -49,10 +51,10 @@ const VerifyEmailOtp = ({ register: _register, errors, setValue, onHandleChangeT
   return (
     <div className="space-y-5">
       <div className="space-y-2 text-start">
-        <h1 className="text-2xl font-bold text-white uppercase sm:text-3xl">
+        <h1 className="text-xl font-bold text-white uppercase sm:text-3xl">
           WE SENT AN EMAIL!
         </h1>
-        <p className="text-sm text-gray-400 sm:text-base">
+        <p className="text-xs text-gray-400 sm:text-base">
           Check your inbox to verify your email address. Just click the link,
           and you`ll be ready to start streaming!
         </p>
@@ -66,10 +68,10 @@ const VerifyEmailOtp = ({ register: _register, errors, setValue, onHandleChangeT
             value={otpValue}
             onChange={handleOtpChange}
             autoFocus
-            className="grid grid-cols-6"
+            className="grid grid-cols-6 gap-2 sm:gap-3"
           />
           {errors.otp && (
-            <p className="text-center text-sm text-red-400">
+            <p className="text-center text-xs sm:text-sm text-red-400">
               {errors.otp.message}
             </p>
           )}
@@ -77,7 +79,7 @@ const VerifyEmailOtp = ({ register: _register, errors, setValue, onHandleChangeT
 
         {/* Resend OTP */}
         <div className="text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-400">
             Didn&apos;t receive the code?{' '}
             <Button
               type="button"

@@ -18,6 +18,7 @@ import {
   // yourDetailsSchema,
 } from '@/lib/validations/auth';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import {
   Dialog,
   DialogContent,
@@ -32,13 +33,7 @@ const CreateAcountPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<CreateAccountFormData>({
+  const form = useForm<CreateAccountFormData>({
     resolver: zodResolver(createAccountSchema),
       // selectedTabValue === 'email-otp'
       //   ? zodResolver(otpSchema)
@@ -47,8 +42,21 @@ const CreateAcountPage = () => {
       //   : selectedTabValue === 'your-details'
       //   ? zodResolver(yourDetailsSchema)
       //   : undefined,
-    mode: 'onChange',
+    mode: 'onSubmit',
+    defaultValues: {
+      otp: '',
+      password: '',
+      confirmPassword: '',
+      interests: [],
+      username: '',
+      firstName: '',
+      lastName: '',
+      middleName: '',
+      birthday: '',
+      gender: '',
+    },
   });
+  const { handleSubmit } = form;
 
   const displayProgressValue = useMemo(() => {
     switch (selectedTabValue) {
@@ -112,56 +120,44 @@ const CreateAcountPage = () => {
     }
   };
 
-  // removed inline summary view; success handled by modal below
-
   return (
-    <div className="flex h-dvh items-center justify-center">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md space-y-3"
-      >
-        <Tabs value={selectedTabValue} className="w-full space-y-3">
-          <Progress
-            value={displayProgressValue}
-            className="active:bg-red-500"
-          />
+    <div className="flex min-h-dvh items-center justify-center px-4 py-6 sm:px-6">
+      <Form {...form}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full max-w-md space-y-4 sm:space-y-5"
+        >
+          <Tabs value={selectedTabValue} className="w-full space-y-4 sm:space-y-5">
+            <Progress
+              value={displayProgressValue}
+              className="active:bg-red-500"
+            />
           <TabsContent value="email-otp">
             <VerifyEmailOtp
-              register={register}
-              errors={errors}
-              setValue={setValue}
+              // now uses form context inside component
               onHandleChangeTab={handleNextStep}
             />
           </TabsContent>
           <TabsContent value="create-password">
             <CreatePassword
-              register={register}
-              errors={errors}
-              watch={watch}
               onHandleChangeTab={handleNextStep}
               onHandlePreviousTab={handlePreviousStep}
             />
           </TabsContent>
           <TabsContent value="your-interest">
             <YourInterests
-              setValue={setValue}
-              watch={watch}
-              errors={errors}
               onHandleChangeTab={handleNextStep}
               onHandlePreviousTab={handlePreviousStep}
             />
           </TabsContent>
           <TabsContent value="your-details">
             <YourDetails
-              register={register}
-              errors={errors}
-              watch={watch}
-              setValue={setValue}
               isSubmitting={isSubmitting}
             />
           </TabsContent>
         </Tabs>
-      </form>
+        </form>
+      </Form>
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="bg-[#191419] border border-white/5">
           <DialogHeader className="text-center">

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,17 +47,7 @@ const LoginPage = () => {
   // };
 
   return (
-    <div className="flex min-h-screen flex-col text-white">
-      {/* Header with back button */}
-      <div className="flex items-start justify-between p-4 sm:p-6">
-        <Link
-          href="/"
-          className="flex items-center text-green-400 transition-colors hover:text-green-300"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Link>
-      </div>
-
+    <div className="flex min-h-dvh flex-col text-white pt-3">
       {/* Main content */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 pb-8 sm:px-6">
         <div className="w-full max-w-md space-y-8">
@@ -81,6 +71,7 @@ const LoginPage = () => {
               alt="logo"
               height={150}
               width={150}
+              className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]"
             />
           </div>
 
