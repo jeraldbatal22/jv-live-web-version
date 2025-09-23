@@ -3,16 +3,15 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const NotFoundPage = () => {
+const ComingSoon = () => {
   const router = useRouter();
   return (
-    <div className="flex min-h-dvh items-center justify-center px-4">
+    <div className="flex min-h-dvh items-center justify-center pt-4">
       <div className="w-full max-w-md flex-1 space-y-10">
-
         {/* Logo */}
         <div className="flex justify-center">
           <Image
-            src="/assets/images/logo.png"
+            src="/assets/images/svg/rocket.svg"
             alt="logo"
             height={150}
             width={150}
@@ -22,14 +21,14 @@ const NotFoundPage = () => {
 
         <div className="space-y-2 text-center">
           <h1 className="text-4xl font-bold tracking-wider text-white uppercase sm:text-4xl">
-            404
+            COMING SOON
           </h1>
           <h1 className="text-3xl font-bold tracking-wider text-white uppercase sm:text-4xl">
-            PAGE NOT FOUND.
+            WORK IN PROGRESS
           </h1>
           <p className="text-sm text-gray-400 sm:text-base">
-            It seems this page is empty or the content hasn’t gone live. Check
-            back later or explore other streams!
+            We`re working on something amazing just for you. Stay tuned—this
+            feature will be live before you know it!
           </p>
         </div>
         <Button
@@ -44,4 +43,4 @@ const NotFoundPage = () => {
   );
 };
 
-export default NotFoundPage;
+export default ComingSoon;

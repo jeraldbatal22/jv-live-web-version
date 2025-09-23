@@ -14,17 +14,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import {
-  ChevronRight,
-  MenuIcon,
-  Search,
-  LogInIcon,
-  // MessageCircle,
-  // User,
-  // Camera,
-  Home,
-  Newspaper,
-} from 'lucide-react';
+import { ChevronRight, MenuIcon, Search, LogInIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -32,11 +22,15 @@ import { useState } from 'react';
 import { Label } from '../ui/label';
 
 const menuItems = [
-  { title: 'Feed', url: '/', icon: Newspaper },
-  { title: 'Home', url: '/home', icon: Home },
-  // { title: 'Live', url: '/live', icon: Camera },
-  // { title: 'Chats', url: '/chats', icon: MessageCircle },
-  // { title: 'Profile', url: '/profile', icon: User },
+  { title: 'Feed', url: '/', icon: '/assets/icons/svg/feed-icon.svg' },
+  { title: 'Home', url: '/home', icon: '/assets/icons/svg/home-icon.svg' },
+  { title: 'Live', url: '/live', icon: '/assets/icons/svg/add-icon.svg' },
+  { title: 'Chats', url: '/chats', icon: '/assets/icons/svg/chat-icon.svg' },
+  {
+    title: 'Profile',
+    url: '/profile',
+    icon: '/assets/icons/svg/profile-icon.svg',
+  },
 ];
 
 const SidebarApp = () => {
@@ -65,11 +59,11 @@ const SidebarApp = () => {
               onClick={toggleSidebar}
               variant="ghost"
               size="sm"
-              className="h-12 w-12 cursor-pointer rounded-l-full border border-r-0 border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="h-12 w-12 cursor-pointer rounded-l-full border border-r-0 border-gray-600 bg-[linear-gradient(105deg,#57A7FF_0%,#04FF00_100%)] text-gray-300 hover:bg-gray-700 hover:text-white"
             >
               <ChevronRight
                 className={cn(
-                  '!h-6 !w-6 transition-transform',
+                  '!h-[26px] !w-[26px] transition-transform',
                   open && 'rotate-180'
                 )}
               />
@@ -87,16 +81,16 @@ const SidebarApp = () => {
             />
             <div className="flex flex-col">
               <Label className="text-sm">Welcome back!</Label>
-              <Label className="text-lg">Jerald Batal</Label>
+              <Label className="text-lg">Guest</Label>
             </div>
           </div>
         ) : (
           <Button
             onClick={toggleSidebar}
             variant="ghost"
-            className="cursor-pointer hover:bg-transparent hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]"
+            className="!mr-2 cursor-pointer hover:bg-transparent hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]"
           >
-            <MenuIcon className="!h-6 !w-6" />
+            <MenuIcon className="!h-[26px] !w-[26px] text-[linear-gradient(105deg,#57A7FF_0%,#04FF00_100%)]" />
           </Button>
           // <SidebarTrigger className="!w-32" />
         )}
@@ -117,7 +111,7 @@ const SidebarApp = () => {
         {/* Menu Section */}
         <SidebarGroup className="space-y-4 p-0">
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2 px-0">
+            <SidebarMenu className={cn(!open && 'space-y-3 mt-5', 'px-0')}>
               {menuItems.map((item) => (
                 <SidebarMenuItem
                   key={item.title}
@@ -131,7 +125,7 @@ const SidebarApp = () => {
                       href=""
                       onClick={(e) => handleNavigateMenu(e, item)}
                       className={cn(
-                        'gap-3 px-5 py-2 text-[1.2rem] transition-colors hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]',
+                        'gap-3 px-5 !py-6 text-[1.2rem] transition-colors hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]',
                         activeMenu === item.url
                           ? 'text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]'
                           : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
@@ -140,13 +134,11 @@ const SidebarApp = () => {
                       {activeMenu === item.url && open && (
                         <div className="absolute top-0 bottom-0 left-0 w-2 rounded-r-full bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]" />
                       )}
-                      <item.icon
-                        className={cn(
-                          '!h-6 !w-6 hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]',
-                          activeMenu === item.url
-                            ? 'text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]'
-                            : 'text-gray-400'
-                        )}
+                      <Image
+                        src={item.icon}
+                        alt={item.title}
+                        height={26}
+                        width={26}
                       />
                       <span
                         className={cn(
@@ -169,8 +161,9 @@ const SidebarApp = () => {
         {/* Call to Action Section */}
         {open ? (
           <Button
-            onClick={() => router.push("/login")}
-            className="flex w-full items-center gap-2 rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] font-medium text-white hover:bg-pink-400"
+            variant="ghost"
+            onClick={() => router.push('/login')}
+            className="flex w-full items-center gap-2 rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] py-6 font-medium text-white hover:bg-pink-400"
             size="sm"
           >
             <LogInIcon className="h-4 w-4" />
@@ -178,7 +171,7 @@ const SidebarApp = () => {
           </Button>
         ) : (
           <Button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push('/login')}
             className="flex w-full items-center gap-2 rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] font-medium text-white hover:bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]"
             size="sm"
           >
