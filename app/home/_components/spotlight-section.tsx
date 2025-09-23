@@ -16,9 +16,9 @@ interface SpotlightSectionProps {
 const SpotlightSection = ({ data }: SpotlightSectionProps) => {
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h3 className="md:text-title-sm py-3 text-xl md:py-5">Spotlight</h3>
-        <button className="text-primary-500 hover:text-primary-400 flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center justify-between px-1 sm:px-0">
+        <h3 className="py-3 text-lg sm:text-xl md:text-title-sm md:py-5">Spotlight</h3>
+        <button className="flex items-center gap-1 text-primary-500 hover:text-primary-400 sm:gap-2">
           <ChevronRightIcon className="h-3 w-3 sm:h-4 sm:w-4" />
         </button>
       </div>
@@ -28,11 +28,11 @@ const SpotlightSection = ({ data }: SpotlightSectionProps) => {
           loop: true,
         }}
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-2 md:-ml-4">
           {data.map((item: any) => {
             return (
               <Fragment key={item.id}>
-                <CarouselItem className="basis-2/4 md:basis-1/5">
+                <CarouselItem className="basis-2/3 sm:basis-1/2 md:basis-1/3 lg:basis-1/5 pl-2 md:pl-4">
                   <CardCover
                     id={item.id}
                     coverImageUrl={item.coverImageUrl}

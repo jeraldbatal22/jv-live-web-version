@@ -6,40 +6,12 @@ import { useFormContext } from 'react-hook-form';
 import { CreateAccountFormData } from '@/lib/validations/auth';
 // import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import CATEGORIES_MOCK_DATA from '@/mock/categories-data';
 
 interface YourInterestsProps {
   onHandleChangeTab: () => void;
   onHandlePreviousTab?: () => void;
 }
-
-interface InterestCategory {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-const interestCategories: InterestCategory[] = [
-  { id: 'beauty', name: 'Beauty', icon: '/assets/icons/svg/beauty-icon.svg' },
-  { id: 'games', name: 'Games', icon: '/assets/icons/svg/games-icon.svg' },
-  {
-    id: 'hobbies',
-    name: 'Hobbies',
-    icon: '/assets/icons/svg/hobbies-icon.svg',
-  },
-  {
-    id: 'travel',
-    name: 'Travel & Tours',
-    icon: '/assets/icons/svg/travel-icon.svg',
-  },
-  { id: 'food', name: 'Food', icon: '/assets/icons/svg/food-icon.svg' },
-  { id: 'sports', name: 'Sports', icon: '/assets/icons/svg/sports-icon.svg' },
-  {
-    id: 'laugh',
-    name: 'Laughs & Humour',
-    icon: '/assets/icons/svg/laugh-icon.svg',
-  },
-  { id: 'health', name: 'Health', icon: '/assets/icons/svg/health-icon.svg' },
-];
 
 const YourInterests = ({ onHandleChangeTab, onHandlePreviousTab }: YourInterestsProps) => {
   const { setValue, watch, trigger, formState: { errors } } = useFormContext<CreateAccountFormData>();
@@ -115,7 +87,7 @@ const YourInterests = ({ onHandleChangeTab, onHandlePreviousTab }: YourInterests
 
       {/* Interest categories grid */}
       <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4">
-        {interestCategories.map((category) => {
+        {CATEGORIES_MOCK_DATA.map((category) => {
           const isSelected = selectedInterests.includes(category.id);
           return (
             <Button
