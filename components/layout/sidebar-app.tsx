@@ -169,6 +169,7 @@ const SidebarApp = () => {
         {/* Call to Action Section */}
         {open ? (
           <Button
+            onClick={() => router.push("/login")}
             className="flex w-full items-center gap-2 rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] font-medium text-white hover:bg-pink-400"
             size="sm"
           >
@@ -177,6 +178,7 @@ const SidebarApp = () => {
           </Button>
         ) : (
           <Button
+            onClick={() => router.push("/login")}
             className="flex w-full items-center gap-2 rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] font-medium text-white hover:bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]"
             size="sm"
           >

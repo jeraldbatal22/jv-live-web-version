@@ -2,48 +2,53 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
+import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
 import Image from 'next/image';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      isAcceptTermsAndPrivacy: false,
+    },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implement actual login logic
-      console.log('Login data:', data);
+      // TODO: Implement actual register logic
+      console.log('Register data:', data);
+      router.push('/create-account');
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      router.push("/")
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Register error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // const handleSocialLogin = (provider: 'facebook' | 'google' | 'apple') => {
-  //   console.log(`Login with ${provider}`);
-  //   // TODO: Implement social login logic
+  // const handleSocialRegister = (provider: 'facebook' | 'google' | 'apple') => {
+  //   console.log(`Register with ${provider}`);
+  //   // TODO: Implement social register logic
   // };
 
   return (
@@ -64,10 +69,10 @@ const LoginPage = () => {
           {/* Title section */}
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold tracking-wider text-white uppercase sm:text-4xl">
-              LOGIN
+              REGISTER
             </h1>
             <p className="text-sm text-gray-400 sm:text-base">
-              Log in to continue streaming, connecting, and exploring.
+              Register to continue streaming, connecting, and exploring.
             </p>
             <p className="text-sm text-gray-400 sm:text-base">
               Your audience is waiting!
@@ -84,7 +89,7 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Login form */}
+          {/* Register form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email field */}
             <div className="space-y-2">
@@ -106,72 +111,64 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Password field */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="password"
-                  className="text-sm font-medium text-white uppercase"
-                >
-                  PASSWORD
-                </Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-gray-400 transition-colors hover:text-white"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  placeholder="Enter password"
-                  type={showPassword ? 'text' : 'password'}
-                  className="h-12 rounded-full border-none bg-gray-800 pr-12 text-white placeholder:text-gray-400 focus:border-pink-400 focus:ring-pink-400/20"
-                  {...register('password')}
-                />
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
+              <div className="flex items-center gap-3">
+                <Controller
+                  name="isAcceptTermsAndPrivacy"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="terms"
+                      checked={!!field.value}
+                      onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+                    />
                   )}
-                </Button>
+                />
+                <Label htmlFor="terms">
+                  I Accept the{' '}
+                  <Link href="" className="!text-green-500">
+                    Terms of Use
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="" className="!text-green-500">
+                    Privacy Policy
+                  </Link>
+                </Label>
               </div>
-              {errors.password && (
+              {errors.isAcceptTermsAndPrivacy && (
                 <p className="text-sm text-red-400">
-                  {errors.password.message}
+                  {errors.isAcceptTermsAndPrivacy.message}
                 </p>
               )}
             </div>
 
-            {/* Login button */}
+            {/* Register button */}
             <Button
               type="submit"
               disabled={isLoading}
               className="h-12 w-full transform rounded-lg bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] text-lg font-bold text-white transition-all duration-200 hover:scale-[1.02] hover:from-pink-600 hover:to-pink-500 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? 'LOGGING IN...' : 'LOGIN'}
+              {isLoading ? 'REGISTERING...' : 'REGISTER'}
             </Button>
           </form>
 
-          {/* Social login section */}
+          {/* Social register section */}
           <div className="space-y-4">
             {/* Divider */}
             <div className="flex items-center">
               <div className="flex-1 border-t-2 border-gray-700"></div>
-              <span className="flex-1 pl-6 text-gray-400">Or Login using</span>
+              <span className="flex-1 pl-6 text-gray-400">
+                Or Register using
+              </span>
               <div className="flex-1 border-t-2 border-gray-700"></div>
             </div>
 
-            {/* Social login buttons */}
+            {/* Social register buttons */}
             <div className="flex gap-4">
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/google-icon.svg"
                   height={35}
@@ -179,7 +176,10 @@ const LoginPage = () => {
                   alt="google-icon"
                 />
               </Button>
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/apple-icon.svg"
                   height={35}
@@ -187,7 +187,10 @@ const LoginPage = () => {
                   alt="apple-icon"
                 />
               </Button>
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/facebook-icon.svg"
                   height={35}
@@ -198,16 +201,16 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Registration link */}
+          {/* Login link */}
           <div className="text-center">
             <span className="text-sm text-gray-400">
-              Don`t have an account?{' '}
+              Already have an account?{' '}
             </span>
             <Link
-              href="/register"
+              href="/login"
               className="text-sm font-medium !text-green-400 !underline transition-colors hover:text-green-300"
             >
-              Register
+              Login
             </Link>
           </div>
         </div>
@@ -216,4 +219,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

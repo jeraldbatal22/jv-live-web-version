@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import {
   Play,
   Pause,
@@ -109,6 +110,15 @@ const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
   }, [isMuted]);
 
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  const handleSeek = (value: number[]) => {
+    const player = playerRef.current;
+    if (player && duration > 0) {
+      const newTime = (value[0] / 100) * duration;
+      player.currentTime(newTime);
+      onPlayPause();
+    }
+  };
 
   const handleSkipForward = () => {
     const player = playerRef.current;
@@ -307,7 +317,7 @@ const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
           e.stopPropagation();
           console.log('first');
         }}
-        className="absolute right-0 bottom-0 left-0 z-1 w-full max-w-full px-5 py-3 text-white backdrop-blur-sm md:space-y-3"
+        className="absolute right-0 bottom-0 left-0 z-20 w-full max-w-full px-5 py-3 text-white backdrop-blur-sm md:space-y-3"
       >
         <div className="text-xl font-semibold md:text-3xl">
           {videoData.username}
@@ -322,11 +332,16 @@ const PreviewVideoPlayer: React.FC<PreviewVideoPlayerProps> = ({
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 z-2 h-1 w-full bg-gray-600">
-        <div
-          className="h-full bg-gray-100 transition-all duration-100"
-          style={{ width: `${progressPercentage}%` }}
+      {/* Progress Bar - Interactive Slider */}
+      <div className="absolute bottom-0 left-0 z-20 w-full ">
+        <Slider
+          value={[progressPercentage]}
+          isShowSliderThumb={false}
+          onValueChange={handleSeek}
+          max={100}
+          min={0}
+          step={0.1}
+          className="w-full cursor-pointer"
         />
       </div>
     </div>
