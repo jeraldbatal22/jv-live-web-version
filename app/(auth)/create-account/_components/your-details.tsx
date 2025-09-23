@@ -118,7 +118,7 @@ const YourDetails = ({ isSubmitting }: YourDetailsProps) => {
                 <DatePicker
                   value={field.value ? new Date(field.value) : undefined}
                   onChange={(date) => field.onChange(date?.toISOString() || '')}
-                  placeholder="MM/DD/YY"
+                  placeholder="MM/DD/YYYY"
                   className='text-sm'
                   inputClassName="h-12 border-none rounded-full"
                 />
