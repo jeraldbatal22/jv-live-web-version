@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,12 +11,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useLoginMutation } from '@/features/auth/authApi';
+import { useAppDispatch } from '@/store/hooks';
+import { setLogin } from '@/features/auth/authSlice';
+import { toast } from 'sonner';
 
 const LoginPage = () => {
-  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [login] = useLoginMutation();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
+  const reason = searchParams.get('reason');
 
   const {
     register,
@@ -26,14 +34,14 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (values: LoginFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implement actual login logic
-      console.log('Login data:', data);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      router.push("/")
+      const data = await login(values).unwrap();
+      await dispatch(setLogin(data));
+      window.location.href = callbackUrl
+        ? decodeURIComponent(callbackUrl)
+        : '/';
     } catch (error) {
       console.error('Login error:', error);
     } finally {
@@ -41,13 +49,27 @@ const LoginPage = () => {
     }
   };
 
-  // const handleSocialLogin = (provider: 'facebook' | 'google' | 'apple') => {
-  //   console.log(`Login with ${provider}`);
-  //   // TODO: Implement social login logic
-  // };
+  const handleSocialLogin = (provider: 'facebook' | 'google' | 'apple') => {
+    console.log(`Login with ${provider}`);
+    // TODO: Implement social login logic
+  };
+
+  useEffect(() => {
+    if (reason === 'tokenExpired') {
+      toast.error('Error', {
+        richColors: true,
+        position: 'top-center',
+        description: 'Your session has expired. Please log in again.',
+      });
+    }
+
+    return () => {
+      toast.dismiss();
+    };
+  }, [reason]);
 
   return (
-    <div className="flex min-h-dvh flex-col text-white pt-3">
+    <div className="flex min-h-dvh flex-col pt-3 text-white">
       {/* Main content */}
       <div className="flex flex-1 flex-col items-center justify-center px-4 pb-8 sm:px-6">
         <div className="w-full max-w-md space-y-8">
@@ -71,7 +93,7 @@ const LoginPage = () => {
               alt="logo"
               height={150}
               width={150}
-              className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]"
+              className="h-[100px] w-[100px] md:h-[150px] md:w-[150px]"
             />
           </div>
 
@@ -162,7 +184,11 @@ const LoginPage = () => {
 
             {/* Social login buttons */}
             <div className="flex gap-4">
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                onClick={() => handleSocialLogin('google')}
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/google-icon.svg"
                   height={35}
@@ -170,7 +196,11 @@ const LoginPage = () => {
                   alt="google-icon"
                 />
               </Button>
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                onClick={() => handleSocialLogin('apple')}
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/apple-icon.svg"
                   height={35}
@@ -178,7 +208,11 @@ const LoginPage = () => {
                   alt="apple-icon"
                 />
               </Button>
-              <Button variant="ghost" className="flex h-[62px] flex-1 items-center justify-center rounded-2xl bg-gray-transparent border-1">
+              <Button
+                onClick={() => handleSocialLogin('facebook')}
+                variant="ghost"
+                className="bg-gray-transparent flex h-[62px] flex-1 items-center justify-center rounded-2xl border-1"
+              >
                 <Image
                   src="/assets/icons/svg/facebook-icon.svg"
                   height={35}

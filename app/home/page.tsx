@@ -48,11 +48,15 @@ const DiscoverPage = () => {
             {USERS_MOCK_DATA.map((actor, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 snap-start cursor-pointer text-center"
+                className="flex-shrink-0 cursor-pointer snap-start text-center"
               >
                 <div className="relative object-cover transition-all duration-300 ease-in-out hover:scale-105">
                   <Avatar className="mx-auto mb-1 h-12 w-12 border-4 border-pink-500 sm:mb-2 sm:h-16 sm:w-16 md:mb-3 md:h-20 md:w-20 lg:h-24 lg:w-24">
-                    <AvatarImage src={actor.image} alt={actor.name} />
+                    <AvatarImage
+                      src={actor.image}
+                      alt={actor.name}
+                      className="object-cover"
+                    />
                     <AvatarFallback>
                       {actor.name
                         .split(' ')
@@ -60,7 +64,7 @@ const DiscoverPage = () => {
                         .join('')}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="absolute -bottom-2.5 right-1/2 z-10 flex translate-x-1/2 items-center gap-0.5 rounded-md bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] px-1.5 py-0.5 backdrop-blur-sm sm:gap-1 sm:px-2 sm:py-1">
+                  <div className="absolute right-1/2 -bottom-2.5 z-10 flex translate-x-1/2 items-center gap-0.5 rounded-md bg-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] px-1.5 py-0.5 backdrop-blur-sm sm:gap-1 sm:px-2 sm:py-1">
                     <Signal
                       className="h-2.5 w-2.5 sm:!h-4 sm:!w-4"
                       fill="currentColor"

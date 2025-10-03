@@ -15,7 +15,19 @@ interface OTPInputProps {
 }
 
 const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
-  ({ length = 6, value = '', onChange, onComplete, className, disabled, autoFocus, ...props }, ref) => {
+  (
+    {
+      length = 6,
+      value = '',
+      onChange,
+      onComplete,
+      className,
+      disabled,
+      autoFocus,
+      ...props
+    },
+    ref
+  ) => {
     const [otp, setOtp] = useState<string[]>(new Array(length).fill(''));
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -30,6 +42,7 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
         });
         setOtp(newOtp);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value, length]);
 
     const handleChange = (element: HTMLInputElement, index: number) => {
@@ -55,7 +68,10 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    const handleKeyDown = (
+      e: React.KeyboardEvent<HTMLInputElement>,
+      index: number
+    ) => {
       if (disabled) return;
 
       if (e.key === 'Backspace') {
@@ -78,17 +94,20 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
       if (disabled) return;
 
       e.preventDefault();
-      const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, length);
+      const pastedData = e.clipboardData
+        .getData('text')
+        .replace(/\D/g, '')
+        .slice(0, length);
       const newOtp = [...otp];
-      
+
       for (let i = 0; i < pastedData.length && i < length; i++) {
         newOtp[i] = pastedData[i];
       }
-      
+
       setOtp(newOtp);
       const otpValue = newOtp.join('');
       onChange?.(otpValue);
-      
+
       if (otpValue.length === length) {
         onComplete?.(otpValue);
         inputRefs.current[length - 1]?.focus();
@@ -126,7 +145,7 @@ const OTPInput = React.forwardRef<HTMLInputElement, OTPInputProps>(
             onKeyDown={(e) => handleKeyDown(e, index)}
             onPaste={handlePaste}
             disabled={disabled}
-            className="h-12 w-12 text-center text-lg font-semibold rounded-lg border-none bg-gray-800 text-white focus:border-pink-400 focus:ring-pink-400/20"
+            className="h-12 w-12 rounded-lg border-none bg-gray-800 text-center text-lg font-semibold text-white focus:border-pink-400 focus:ring-pink-400/20"
           />
         ))}
       </div>

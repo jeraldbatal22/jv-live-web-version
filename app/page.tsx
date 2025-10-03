@@ -32,8 +32,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
       title: 'For Bigger Fun',
       username: 'funzone',
-      caption:
-        'Maximum fun ahead! 🎉 #fun #party #goodvibes #weekend #laughs',
+      caption: 'Maximum fun ahead! 🎉 #fun #party #goodvibes #weekend #laughs',
       likes: '120.1K',
       comments: '2341',
       saves: '8.2K',
@@ -43,8 +42,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
       title: 'For Bigger Joyrides',
       username: 'joyrider',
-      caption:
-        'Take a ride! 🚗💨 #joyride #cars #adventure #road',
+      caption: 'Take a ride! 🚗💨 #joyride #cars #adventure #road',
       likes: '210.2K',
       comments: '3210',
       saves: '12.4K',
@@ -54,8 +52,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
       title: 'For Bigger Meltdowns',
       username: 'meltdown',
-      caption:
-        'When things heat up! 🔥 #meltdown #drama #intense',
+      caption: 'When things heat up! 🔥 #meltdown #drama #intense',
       likes: '98.7K',
       comments: '1890',
       saves: '5.6K',
@@ -65,8 +62,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
       title: 'Sintel (Short)',
       username: 'blender',
-      caption:
-        'Beautiful open movie. 🐉 #sintel #blender #animation #cinema',
+      caption: 'Beautiful open movie. 🐉 #sintel #blender #animation #cinema',
       likes: '412.3K',
       comments: '6543',
       saves: '27.9K',
@@ -76,8 +72,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
       title: 'Tears of Steel',
       username: 'openmovie',
-      caption:
-        'Sci‑fi short film 🎬 #tearsofsteel #blender #vfx #scifi',
+      caption: 'Sci‑fi short film 🎬 #tearsofsteel #blender #vfx #scifi',
       likes: '301.5K',
       comments: '5211',
       saves: '21.4K',
@@ -87,8 +82,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
       title: 'Volkswagen GTI Review',
       username: 'autotalk',
-      caption:
-        'Car review time 🚘 #VW #GTI #review #cars',
+      caption: 'Car review time 🚘 #VW #GTI #review #cars',
       likes: '54.6K',
       comments: '1104',
       saves: '2.7K',
@@ -98,8 +92,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
       title: 'What Car For A Grand?',
       username: 'budgetgarage',
-      caption:
-        'Budget car hunt! 💸 #cars #budget #auto #deal',
+      caption: 'Budget car hunt! 💸 #cars #budget #auto #deal',
       likes: '76.1K',
       comments: '1540',
       saves: '4.1K',
@@ -109,8 +102,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
       title: 'Subaru Outback Street & Dirt',
       username: 'rallylife',
-      caption:
-        'On and off road! 🏞️ #subaru #outback #rally #4x4',
+      caption: 'On and off road! 🏞️ #subaru #outback #rally #4x4',
       likes: '89.9K',
       comments: '1720',
       saves: '5.3K',
@@ -120,8 +112,7 @@ const FeedPage = () => {
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
       title: 'We Are Going On Bullrun',
       username: 'roadtrip',
-      caption:
-        'The rally begins! 🏁 #bullrun #roadtrip #cars',
+      caption: 'The rally begins! 🏁 #bullrun #roadtrip #cars',
       likes: '65.2K',
       comments: '1209',
       saves: '3.2K',
@@ -131,8 +122,7 @@ const FeedPage = () => {
       url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
       title: 'Flowers (CC0)',
       username: 'mdnmedia',
-      caption:
-        'Relaxing flower clip 🌺 #nature #flowers #relax',
+      caption: 'Relaxing flower clip 🌺 #nature #flowers #relax',
       likes: '41.7K',
       comments: '820',
       saves: '2.1K',
@@ -142,8 +132,7 @@ const FeedPage = () => {
       url: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
       title: 'Sintel Trailer (W3C)',
       username: 'w3media',
-      caption:
-        'Trailer cut 🎞️ #sintel #trailer #animation',
+      caption: 'Trailer cut 🎞️ #sintel #trailer #animation',
       likes: '52.4K',
       comments: '1012',
       saves: '2.4K',
@@ -153,8 +142,7 @@ const FeedPage = () => {
       url: 'https://media.w3.org/2010/05/bunny/trailer.mp4',
       title: 'Bunny Trailer (W3C)',
       username: 'w3media',
-      caption:
-        'Classic bunny 🐰 #bunny #trailer #cartoon',
+      caption: 'Classic bunny 🐰 #bunny #trailer #cartoon',
       likes: '47.8K',
       comments: '930',
       saves: '1.9K',
@@ -164,8 +152,7 @@ const FeedPage = () => {
       url: 'https://media.w3.org/2010/05/video/movie_300.mp4',
       title: 'Movie 300 (W3C)',
       username: 'w3media',
-      caption:
-        'Test clip 300p 📺 #test #sample #video',
+      caption: 'Test clip 300p 📺 #test #sample #video',
       likes: '33.4K',
       comments: '640',
       saves: '1.2K',
@@ -198,7 +185,7 @@ const FeedPage = () => {
       title: 'For Bigger Escapes',
       username: 'escapeartist',
       caption:
-        'The ultimate escape! 🏃‍♂️💨 #escape #adventure #thriller #action #cinematic...',
+        'The ultimate escape! 🏃‍♂️💨 -#escape #adventure #thriller #action #cinematic...',
       likes: '345.6K',
       comments: '7890',
       saves: '23.4K',
@@ -231,7 +218,7 @@ const FeedPage = () => {
       emblaApi?.off('select', (e) => console.log(e));
     };
   }, [emblaApi]);
-  console.log(current)
+  console.log(current);
   return (
     <MainLayout>
       <div className="relative h-full w-full flex-1 overflow-hidden">
