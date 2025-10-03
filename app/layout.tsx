@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ReduxProviders } from '@/store/redux-providers';
 import { Toaster } from '@/components/ui/sonner';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,8 +32,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ReduxProviders>
-          {children}
-          <Toaster />
+          <SidebarProvider>
+            {children}
+            <Toaster />
+          </SidebarProvider>
         </ReduxProviders>
       </body>
     </html>

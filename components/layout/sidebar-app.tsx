@@ -105,7 +105,7 @@ const SidebarApp = () => {
       </SidebarHeader>
       <SidebarContent className="text-center">
         {open && (
-          <div className="mb-6 px-6">
+          <div className="mb-1 px-4 md:mb-6 md:px-6">
             <div className="relative">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-green-500" />
               <input
@@ -133,7 +133,7 @@ const SidebarApp = () => {
                       href=""
                       onClick={(e) => handleNavigateMenu(e, item)}
                       className={cn(
-                        'gap-3 px-5 !py-6 text-[1.2rem] transition-colors hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]',
+                        'gap-3 px-5 !py-5 text-[1.2rem] transition-colors hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)] md:!py-6',
                         activeMenu === item.url
                           ? 'text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]'
                           : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
@@ -147,11 +147,12 @@ const SidebarApp = () => {
                         alt={item.title}
                         height={26}
                         width={26}
+                        className="h-6 w-6 md:h-7 md:w-7"
                       />
                       <span
                         className={cn(
                           'hover:text-[linear-gradient(105deg,#FE39F0_0%,#EE003F_100%)]',
-                          'text-lg font-medium',
+                          'text-sm font-medium md:text-lg',
                           'group-data-[collapsible=icon]:hidden'
                         )}
                       >
